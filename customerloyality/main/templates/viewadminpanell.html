@@ -1,0 +1,194 @@
+{% extends 'base.html' %} {% block content %}
+
+<div class="container-fluid mt-5 ">
+    <h1 class="mt-3">Report :</h1>
+    <a class="btn btn-sm btn-secondary" href="/admin/">Home</a>
+    <a class="btn btn-sm btn-outline-success" href="/logout">Logout</a>
+    <!-- Button trigger modal -->
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Are you sure you want to delete all?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    This action cannot be undone.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <a type="button" class="btn btn-danger" href="/reset-db">Reset</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="table-responsive">
+
+        <table class="table table-sm table-responsive mt-3">
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">NFC Tag</th>
+                    <th scope="col">ID</th>
+                    <th scope="col">Phone</th>
+                    <th scope="col">Address</th>
+                    <th scope="col">Reward Points</th>
+                    <th scope="col">Total Rewards Won</th>
+                    <th scope="col">Time For Swipes</th>
+                    <th scope="col">Time For Rewards</th>
+   
+                </tr>
+            </thead>
+            <tbody>
+                {% for customer in customers %}
+
+                <tr>
+
+                    <td>{{customer.name}}</td>
+                    <td>{{customer.email}}</td>
+                    <td>
+                        <p style="width:100px;word-wrap: break-word;">{{customer.EMV_num}}</p>
+                    </td>
+                    <td>
+                        <p style="width:100px;word-wrap: break-word;">{{customer.driving_license}}</p>
+                    </td>
+                    <td>{{customer.phone}}</td>
+                    <td>{{customer.address}}</td>
+                    <td>{{customer.reward_points}}</td>
+                    <td>{{customer.total_redeem_rewards}}</td>
+                    <td>
+                        <button onclick='get_time("{{customer.id}}")' type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#time{{customer.id}}">
+                    View
+                    </button>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="time{{customer.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Time For Swipes</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div id="times-table{{customer.id}}" class="modal-body">
+                                        <div class="spinner-border" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <button onclick='get_time_reward("{{customer.id}}")' type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#reward{{customer.id}}">
+                    View
+                    </button>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="reward{{customer.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Time For Reward Issued</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div id="reward-time-table{{customer.id}}" class="modal-body">
+                                        <div class="spinner-border" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+
+            </tbody>
+        </table>
+       
+    </div>
+
+    <script>
+        function get_time_reward(customer_id) {
+            let url = `/get/${customer_id}/time-reward`
+            let options = {
+                method: 'get'
+            }
+            fetch(url, options).then(res => res.json()).then((json_res) => {
+                let table_body = ''
+                console.log(">>>>>>  >>>>>>")
+                for (const [key, value] of Object.entries(json_res)) {
+                    console.log(key, value);
+                    table_body += `
+                    <tr>
+                      <td>${key}</td>
+                      <td>${value}</td>
+
+                    </tr>
+                    `
+                }
+                let html = `
+                                <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Date</th>
+                                                <th scope="col">Time</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                ${table_body}
+                                        </tbody>
+                                    </table>
+                `
+                console.log(json_res)
+                document.getElementById(`reward-time-table${customer_id}`).innerHTML = html
+            })
+        }
+
+        function get_time(customer_id) {
+            let url = `/get/${customer_id}/time`
+            let options = {
+                method: 'get'
+            }
+            fetch(url, options).then(res => res.json()).then((json_res) => {
+                let table_body = ''
+                console.log(">>>>>>  >>>>>>")
+                for (const [key, value] of Object.entries(json_res)) {
+                    console.log(key, value);
+                    table_body += `
+                    <tr>
+                      <td>${key}</td>
+                      <td>${value}</td>
+
+                    </tr>
+                    `
+                }
+                let html = `
+                                <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Date and Time</th>
+                                                <th scope="col">Reward Points</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                ${table_body}
+                                        </tbody>
+                                    </table>
+                `
+                console.log(json_res)
+                document.getElementById(`times-table${customer_id}`).innerHTML = html
+            })
+        }
+    </script>
+</div>
+{% endblock content %}

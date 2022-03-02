@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <title>Customer Loyalty</title>
+</head>
+
+<body>
+
+    <div class="container mt-5">
+        <h1>My Customers Report</h1>
+
+
+        <table class="table table-light table-striped">
+            <thead>
+                <tr>
+
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">EMV_Number</th>
+                    <th scope="col">ID</th>
+                    <th scope="col">Phone</th>
+                    <th scope="col">Address</th>
+                    <th scope="col">Total Swipes</th>
+                    <th scope="col">Reward Points</th>
+                    <th scope="col">Reward Redeems</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for customer in customers %}
+
+                <tr>
+
+                    <td>{{customer.name}}</td>
+                    <td>{{customer.email}}</td>
+                    <td>{{customer.EMV_num}}</td>
+                    <td>{{customer.driving_licence}}</td>
+                    <td>{{customer.phone}}</td>
+                    <td style="width:200px;">{{customer.address}}</td>
+                    <td>{{customer.total_swipes_today}}</td>
+                    <td>{{customer.reward_points}}</td>
+                    <td>{{customer.total_redeem_rewards}}</td>
+                </tr>
+
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
+
+</body>
+
+</html>

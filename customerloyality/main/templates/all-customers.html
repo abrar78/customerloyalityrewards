@@ -1,0 +1,95 @@
+{% extends 'base.html' %} {% block content %}
+
+<div class="container mt-5">
+    <h1>My Customers</h1>
+
+
+    <table class="table table-dark table-striped">
+        <thead>
+            <tr>
+
+
+                <th scope="col">Name</th>
+                <th scope="col">Email</th>
+                <!-- <th scope="col">EMV_Number</th>
+                <th scope="col">Driving License</th> -->
+                <th scope="col">Phone</th>
+                <th scope="col">Address</th>
+                <th scope="col">Total Swipes</th>
+                <th scope="col">Reward Points</th>
+                <th scope="col">Change NFC</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for customer in customers.items %}
+
+            <tr>
+
+                <td>{{customer.name}}</td>
+                <td>{{customer.email}}</td>
+                <!-- <td>{{customer.EMV_num}}</td>
+                <td>{{customer.driving_licence}}</td> -->
+                <td>{{customer.phone}}</td>
+                <td style="width:200px;">{{customer.address}}</td>
+                <td>{{customer.total_swipes_today}}</td>
+                <td>{{customer.reward_points}}</td>
+                <td>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#nfc-change-{{customer.id}}">
+                       change
+                      </button>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="nfc-change-{{customer.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title text-dark" id="exampleModalLabel">Give Require Credentials for customer <b>{{customer.name}}</b></h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form autofill="off" autocomplete="off" method="post" action="/customer/change-nfc/{{customer.id}}">
+                                        <div class="mb-3">
+                                            <label for="exampleInputEmail1" class="form-label text-success">ID</label>
+                                            <input type="password" name="id-{{customer.id}}" required class="form-control" value="" autocomplete="false" id="exampleInputEmail1" placeholder="scan id card after clicking here">
+
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="exampleInputPassword1" class="form-label text-success">New NFC Tag</label>
+                                            <input type="password" name="nfc-{{customer.id}}" required class="form-control" value="" autocomplete="false" autofill="false" p placeholder="scan new nfc tag after clicking here" id="exampleInputPassword1">
+                                        </div>
+
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    </form>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+
+            {% endfor %}
+        </tbody>
+    </table>
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            {% if customers.has_prev %}
+            <li class="page-item"> <a class="page-link" href="?q={{customers.prev_num}}">Previous</a></li>
+            {% else %}
+            <li class="page-item"><a class="page-link btn disabled" href="#">Previous</a></li>
+            {% endif %} {% for page in customers.iter_pages() %} {% if page %} {% if page != customers.page %}
+            <li class="page-item"><a class="page-link" href="?q={{page}}">{{page}}</a></li>
+            {% else %}
+            <li class="page-item active"><a class="page-link" href="?q={{page}}">{{page}}</a></li>
+            {% endif %} {% else %}
+            <span class=ellipsis>…</span> {% endif %} {% endfor %} {% if customers.has_next %}
+            <li class="page-item"> <a class="page-link" href="?q={{customers.next_num}}">Next</a></li>
+            {% else %}
+            <li class="page-item"><a class="page-link btn disabled" href="#">Next</a></li>
+            {% endif %}
+
+        </ul>
+    </nav>
+</div>
+
+{% endblock content %}

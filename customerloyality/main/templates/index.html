@@ -1,0 +1,295 @@
+{% extends 'base.html' %} {% block content %}
+<!-- As a link -->
+<div class="modal fade " id="win" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog bg-warning">
+        <div class="modal-content ">
+            <div class="modal-header bg-warning">
+                <h3 class="modal-title text-center fw-bold" id="exampleModalLabel">You Won Price !</h3>
+                <button type="button" id="win_close" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+            </div>
+            <div class="modal-body text-center bg-warning">
+                Congratulations ! You Won A Price
+            </div>
+
+        </div>
+    </div>
+</div>
+<div class="modal fade text-white" id="success" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content ">
+            <div class="modal-header bg-success">
+                <h3 class="modal-title  text-white" id="exampleModalLabel">Swipe Success</h3>
+                <button type="button" class="btn-close" id="success_close" data-bs-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+            </div>
+            <div class="modal-body bg-success">
+                <h4 class="text-center" id="points"></h4>
+            </div>
+
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="fail" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header text-center ">
+                <h3 class="modal-title" id="exampleModalLabel">ERROR</h3>
+                <button type="button" class="btn-close" id="fail_close" data-bs-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+            </div>
+            <div class="modal-body  bg-danger text-white">
+                <h4>"PLEASE TRY AGAIN or SEE CASHIER</h4>
+            </div>
+
+        </div>
+    </div>
+</div>
+<div style="height:20vh" class="bg-secondary">
+    <div style="height:100%;display:flex;align-items:center;align-content: center;flex-direction:column;justify-content:center; justify-items: center;" class="container text-center text-light">
+
+        <h1>ADMIN PANEL</h1>
+    </div>
+</div>
+<div class="container mt-5">
+
+    <h1>Customer Database</h1>
+    <a href="/add-customer/" class="btn btn-outline-dark btn-sm mb-2">Add New</a>
+
+
+    <table class="table table-dark table-striped">
+        <thead>
+            <tr>
+
+                <th scope="col">Name</th>
+                <th scope="col">Email</th>
+                <!-- <th scope="col">EMV Number</th> -->
+                <!-- <th scope="col">Driving License</th> -->
+                <th scope="col">Phone</th>
+                <th scope="col">Address</th>
+                <!-- <th scope="col">Total Swipes</th> -->
+                <th scope="col">Reward Points</th>
+                <th scope="col">Reward Redeemed</th>
+                <th scope="col">Change NFC Tag</th>
+                <!-- <th scope="col">Change NFC Tag</th> -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for customer in customers %}
+
+            <tr>
+
+                <td>{{customer.name}}</td>
+                <td>{{customer.email}}</td>
+
+                <td>{{customer.phone}}</td>
+                <td style="width:200px;">{{customer.address}}</td>
+                <!-- <td>{{customer.total_swipes_today}}</td> -->
+                <td>{{customer.reward_points}}</td>
+                <td>{{customer.total_redeem_rewards}}</td>
+                <td>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#nfc-change-{{customer.id}}">
+                       change
+                      </button>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="nfc-change-{{customer.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title text-dark" id="exampleModalLabel">Give Require Credentials for customer <b>{{customer.name}}</b></h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form autofill="off" autocomplete="off" method="post" action="/customer/change-nfc/{{customer.id}}">
+                                        <div class="mb-3">
+                                            <label for="exampleInputEmail1" class="form-label text-success">ID</label>
+                                            <input onkeydown="return (event.keyCode!=13);" type="password" name="id-{{customer.id}}" required class="form-control" value="" autocomplete="false" id="exampleInputEmail1" placeholder="scan id card after clicking here">
+
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="exampleInputPassword1" class="form-label text-success">New NFC Tag</label>
+                                            <input type="password" name="nfc-{{customer.id}}" required class="form-control" value="" autocomplete="false" autofill="false" p placeholder="scan new nfc tag after clicking here" id="exampleInputPassword1">
+                                        </div>
+
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    </form>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="/all-customers/" class="btn btn-dark btn-sm mb-3">See All</a>
+</div>
+<div class="container mt-5">
+
+    {% if someone_won %}
+
+
+    <h1>Rewards Due</h1>
+
+
+    <table class="table table-warning table-striped">
+        <thead>
+            <tr>
+
+                <th scope="col">Name</th>
+                <th scope="col">Email</th>
+                <th scope="col">Phone</th>
+                <th scope="col">Address</th>
+                <th scope="col">Actions</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            {% for customer in customer_won %}
+
+            <tr>
+                <td>{{customer.name}}</td>
+                <td>{{customer.email}}</td>
+                <td>{{customer.phone}}</td>
+                <td style="width:200px;">{{customer.address}}</td>
+                <td>
+                    <form autocomplete="off" id="id-form{{customer.id}}" method="POST" style="opacity:0;position:absolute;z-index: -100;" action="/give-reward/{{customer.id}}">
+                        {% csrf_token %}
+                        <input type="search" autocomplete="off" name="id{{customer.id}}" id="id-input{{customer.id}}" type="text">
+                    </form>
+                    <button type="submit" id="{{customer.id}}" onclick="scanId(this.id)" class="btn btn-primary">
+                        Scan ID
+                    </button>
+                </td>
+            </tr>
+
+            {% endfor %}
+
+
+        </tbody>
+    </table>
+    {% else %} {% endif %}
+
+</div>
+<!-- Button trigger modal -->
+
+<!-- Modal -->
+
+<button style="display:none" type="button" id="success_modal_btn" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#success">
+    Launch demo modal
+  </button>
+<button style="display:none" type="button" id="fail_modal_btn" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#fail">
+    Launch demo modal
+  </button>
+<button style="display:none" type="button" id="win_modal_btn" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#win">
+    Launch demo modal
+  </button>
+<div class="container mt-5 mb-5">
+    <!-- Button trigger modal -->
+
+    <form style="position:absolute;opacity:0%;bottom:0px;" autocomplete="off" id="swipe-form" action="/" method="post">
+        <input autocomplete="off" id="emv_input" type="search">
+        <button type="submit">submit</button>
+    </form>
+    <button onclick="scanIdFocus(this.id)" id="scanIdBtn" class="btn btn-lg btn-outline-success" style="width:100%">Scan NFC Tag</button>
+
+</div>
+<script>
+    function scanId(id) {
+        let btn = document.getElementById(id)
+        let idInput = document.getElementById(`id-input${id}`)
+        idInput.focus()
+        btn.innerText = "Scan Now !"
+        btn.classList.remove("btn-primary");
+        btn.classList.add("btn-success");
+
+    }
+</script>
+<script>
+    var modal_success_btn = document.getElementById('success_modal_btn')
+    var modal_fail_btn = document.getElementById('fail_modal_btn')
+    var modal_win_btn = document.getElementById('win_modal_btn')
+    var modal_success_close_btn = document.getElementById('success_close')
+    var modal_fail_close_btn = document.getElementById('fail_close')
+    var modal_win_close_btn = document.getElementById('win_close')
+    var swipe_form = document.getElementById('swipe-form')
+    swipe_form.addEventListener('submit', e => {
+        e.preventDefault();
+        swipeDone()
+
+    })
+    window.swipeActivated = false
+    var pointsText = document.getElementById('points')
+
+    function swipeDone() {
+        if (!window.swipeActivated) {
+            window.swipeActivated = true
+
+            let url = '/swipe-card/'
+            let data = {
+                emv_value: document.getElementById('emv_input').value
+            }
+            let options = {
+                method: 'POST',
+                body: JSON.stringify(data)
+            }
+            fetch(url, options).then(res => res.json()).then(json_res => {
+                console.log(json_res)
+                let points = json_res.points
+                window.swipeActivated = false
+                document.getElementById('emv_input').value = ""
+                if (json_res.success) {
+                    if (json_res.points == 10) {
+                        modal_win_btn.click()
+                        setTimeout(function() {
+                            modal_win_close_btn.click()
+                            window.location.reload()
+                        }, 5000)
+                    } else {
+
+                        pointsText.innerText = `Your Total Points ${points}`
+                        modal_success_btn.click()
+                        setTimeout(function() {
+                            modal_success_close_btn.click()
+                            window.location.reload()
+
+                        }, 2000)
+                    }
+                } else {
+                    modal_fail_btn.click()
+                    setTimeout(function() {
+                        modal_fail_close_btn.click()
+                        window.location.reload()
+
+                    }, 2000)
+                }
+
+
+            })
+
+
+
+        }
+    }
+
+    function scanIdFocus(id) {
+        let emv_input = document.getElementById('emv_input')
+        let btn = document.getElementById(id)
+        btn.innerText = "Scan Now"
+        emv_input.focus()
+        setTimeout(function() {
+            let btn = document.getElementById(id)
+            btn.innerText = "Scan ID"
+        }, 10000)
+
+    }
+</script>
+<!-- As a heading -->
+
+{% endblock content %}

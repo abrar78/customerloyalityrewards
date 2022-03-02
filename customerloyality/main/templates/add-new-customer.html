@@ -1,0 +1,115 @@
+<!-- %OHHOLLAND^TOURNOY$MICHAEL$J$JR^116 MEAD LN^?;6360232010364928=241119911123?+0043528 D B 1601175BLNBLU? -->
+<!-- %OHHOLLAND^TOURNOY$BENJAMIN$W$^116 MEAD LN^?;6360232005202349=250119880126?+0043528 D B 1509170REDBRO? -->
+
+<!-- ['%OHHOLLAND',] start with this-->
+
+{% extends 'base.html' %} {% block content %}
+
+
+<form autocomplete="off" id="id-form" style="opacity:0;position:absolute;z-index: -100;" action="">
+    <input type="search" autocomplete="off" id="id-input" type="text">
+
+</form>
+<div class="container mt-5 px-5">
+    <div id="scan-id" style="display:none" class="alert alert-primary" role="alert">
+        SCAN NOW
+    </div>
+    <h1>Add customer</h1>
+    <form id="formMain">
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Name</label>
+            <input required type="text" class="form-control" id="name" name="name" aria-describedby="emailHelp">
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Email</label>
+            <input type="text" class="form-control" id="email" value=" " name="email" aria-describedby="emailHelp">
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Phone</label>
+            <input type="text" class="form-control" id="phone" name="phone" value=" " aria-describedby="emailHelp">
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Address</label>
+            <input type="text" class="form-control" id="address" name="address" value=" " aria-describedby="emailHelp">
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">NFC tag</label>
+            <input type="password" class="form-control" id="emv" name="emv" aria-describedby="emailHelp">
+        </div>
+
+
+        <!-- Button trigger modal -->
+        <button type="submit" class="btn btn-primary">
+            Scan ID
+           </button>
+        <button type="submit" style="display:none;" class="btn btn-primary" data-bs-toggle="modal" id="scanBtn" data-bs-target="#exampleModal">
+   Scan ID
+  </button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Scan ID</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+
+                        Don't click anywhere , just scan the ID of the customer
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    let name = document.getElementById("name")
+    let email = document.getElementById("email")
+    let emv = document.getElementById("emv")
+    let phone = document.getElementById("phone")
+    let address = document.getElementById("address")
+    let scanBtn = document.getElementById("scan-id")
+    let formMain = document.getElementById('formMain')
+    let idInput = document.getElementById('id-input')
+    let idForm = document.getElementById("id-form")
+    idForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        let data = {
+            name: name.value,
+            email: email.value,
+            emv: emv.value,
+            phone: phone.value,
+            address: address.value,
+            id: idInput.value
+        }
+        let url = '/add-customer-api/'
+        let options = {
+            method: 'post',
+            body: JSON.stringify(data)
+        }
+        fetch(url, options).then(res => res.json).then(json_res => {
+            alert("added successfully")
+            window.location.href = "/"
+        })
+    })
+    formMain.addEventListener('submit', function(e) {
+        e.preventDefault();
+        scanBtn.style.display = ""
+        idInput.focus();
+    })
+
+    function checkAll() {
+        if (name.value && email.value && emv.value && phone.value && address.value) {
+            scanBtn.style.display = ""
+            return true
+        } else {
+            return false
+        }
+    }
+</script>
+{% endblock content %}
